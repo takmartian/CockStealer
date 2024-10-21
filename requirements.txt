@@ -1,0 +1,5 @@
+Flask~=3.0.3
+Flask-Cors~=5.0.0
+pystray~=0.19.5
+pillow~=10.4.0
+PyAutoGUI~=0.9.54
