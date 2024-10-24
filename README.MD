@@ -42,7 +42,22 @@
 
 ### 3.3. 待补充其他功能
 
-## 4. 更新日志
+## 4. 打包方法
+> 本工具包使用pyinstaller可打包成Mac、Windows、Linux可执行文件
+1. 安装pyinstaller
+```pip install pyinstaller```
+
+
+2. 打包
+  - Mac: ```pyinstaller -w -n CockStealer --noconfirm -i images/app_icon.ico --add-data "images/tray_icon.ico:images" --add-data "flask_app/static:flask_app/static" --add-data "flask_app/templates:flask_app/templates" --osx-bundle-identifier com.hardcore.cockstealer main.py```
+  - Windows: ```pyinstaller -w -n CockStealer --noconfirm -i images/app_icon.ico --add-data "images/tray_icon.ico;images" --add-data "flask_app/static;flask_app/static" --add-data "flask_app/templates;flask_app/templates" main.py```
+
+3. 运行
+```dist/CockStealer```
+
+> Mac打包的单文件出现Permission Denied情况，暂未解决
+
+## 5. 更新日志
 - 2024-10-24: v0.2.2
   - 修复Flask服务端口被占用问题
   - 优化代码结构
@@ -54,14 +69,3 @@
 
 - 2024-10-13: v0.1.0
   - 保持Teams在线
-
-## 5. 打包方法
-> 本工具包使用pyinstaller可打包成Mac、Windows、Linux可执行文件\
-> 打包方法尚未完善，仅供参考
-1. 安装pyinstaller
-```pip install pyinstaller```
-2. 打包
-```pyinstaller -F main.py```
-3. 运行
-```dist/main.exe```
-
