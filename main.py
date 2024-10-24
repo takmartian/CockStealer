@@ -2,8 +2,8 @@ import logging
 import threading
 from logging.handlers import RotatingFileHandler
 
-from functions.sys_handler import get_system_type, is_frozen
-from flask_app import create_flask_app
+from sys_handler import get_system_type, is_frozen
+import flask_app
 from stray import initial_stray
 
 
@@ -20,15 +20,10 @@ logging.basicConfig(
     ]
 )
 
-# 运行flask
-def run_flask():
-    flask_app = create_flask_app()
-    flask_app.run(host='0.0.0.0', port=5200)
-
 
 def main():
     # 创建线程运行flask
-    threading.Thread(target=run_flask, daemon=True).start()
+    threading.Thread(target=flask_app.main, daemon=True).start()
 
     # 初始化托盘
     initial_stray()
