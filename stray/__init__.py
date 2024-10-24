@@ -35,10 +35,10 @@ def initial_stray():
     image = Image.open('./images/tray_icon.ico')
     menu = Menu(
         Item('保持Teams在线', action=keep_teams_alive, checked=lambda item: kta_state),
-        Item('钉钉打卡脚本（制作中）', action=open_gen_autoxjs),
+        Item('钉钉打卡脚本', action=open_gen_autoxjs),
         Item('帮助', Menu(
             Item('关于本软件', action=about_this),
-            Item('版本号: v0.1.0', action=None, enabled=False)
+            Item('版本号: v0.2.0', action=None, enabled=False)
             )
         ),
         Item('退出', on_quit),

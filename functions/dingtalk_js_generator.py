@@ -121,9 +121,9 @@ def start_check_in():
 
 
 def trip_check():
-    return '''function StartCheckIn(companyName, width, height) {
+    return '''function TripCheck(width, height) {
     while (true) {
-        if (id("com.alibaba.android.rimet:id/title_bar_name").text(companyName).exists()) {
+        if (id("com.alibaba.android.rimet:id/title_bar_name").text("外勤打卡").exists()) {
             sleep(5000);
             break;
         }else{
@@ -133,7 +133,7 @@ def trip_check():
 
     // 计算屏幕上 x:50% 和 y:60% 的坐标
     var x = width * 0.5;   // 50% 宽度
-    var y = height * 0.6;  // 60% 高度
+    var y = height * 0.9;  // 90% 高度
 
     // 在计算出的坐标位置点击
     click(x, y);
@@ -171,6 +171,7 @@ def autojs_main(api_key:str, show_console:bool, is_trip_check:bool):
     var screenHeight = device.height;
 
     KillDingTalk();                     // 结束钉钉进程
+    sleep(2000);
     OpenCheckInPage(companyName, 50);   // 打开打卡页面，部分手机需要多次尝试，可适当调整尝试次数
     StartCheckIn(companyName, screenWidth, screenHeight);       // 开始打卡
     %s
@@ -193,16 +194,17 @@ def gen_dingtalk_js(setting_json: dict):
     if setting_json.get('apihubToken'):     # 追加是否工作日的判断
         result += is_workday(setting_json.get('apihubToken'))
 
-    result += kill_dingtalk()               # 追加结束钉钉进程的代码
-    result += open_check_in_page()          # 追加打开打卡页面的代码
-    result += start_check_in()              # 追加开始打卡的代码
-    
-    if setting_json.get('tripCheck'):       # 追加外勤打卡的代码
-        result += trip_check()
-
     # 生成主流程代码
     is_show_console = setting_json.get('showConsole')
     is_trip_check = setting_json.get('tripCheck')
+
+    result += kill_dingtalk()               # 追加结束钉钉进程的代码
+    result += open_check_in_page()          # 追加打开打卡页面的代码
+    result += start_check_in()              # 追加开始打卡的代码
+
+    if setting_json.get('tripCheck'):       # 追加外勤打卡的代码
+        result += trip_check()
+
     result += autojs_main(setting_json.get('apihubToken'), is_show_console, is_trip_check)
 
     result += 'start("%s");' % setting_json.get('companyName')  # 追加启动代码
