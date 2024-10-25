@@ -1,3 +1,61 @@
+def unlock_phone():
+    return '''function unlockPhone(mode, password) {
+    // 获取屏幕宽高
+    let screenWidth = device.width;
+    let screenHeight = device.height;
+
+    // 上划解锁屏幕
+    swipe(500,2000,500,1000,210);
+    sleep(500);
+
+    if (mode === "noPassword") {
+        console.log("直接上划解锁");
+    }
+    else if (mode === "passwordUnlock") {
+        console.log("上划后自动输入数字密码解锁");
+
+        // 依次输入密码
+        for(var i = 0; i < password.length; i++) {
+            var p = text(password[i].toString()).findOne().bounds();
+            click(p.centerX(), p.centerY());
+            sleep(100);
+        }
+    }
+    else if (mode === "patternUnlock") {
+        console.log("上划后自动进行手势解锁");
+
+        // 设定九宫格的点位（假设3x3的九宫格）
+        let points = [
+            [screenWidth * 0.23, screenHeight * 0.59],  // 点1
+            [screenWidth * 0.5, screenHeight * 0.59],  // 点2
+            [screenWidth * 0.77, screenHeight * 0.59],  // 点3
+            [screenWidth * 0.23, screenHeight * 0.72],  // 点4
+            [screenWidth * 0.5, screenHeight * 0.72],  // 点5
+            [screenWidth * 0.77, screenHeight * 0.72],  // 点6
+            [screenWidth * 0.23, screenHeight * 0.85],  // 点7
+            [screenWidth * 0.5, screenHeight * 0.85],  // 点8
+            [screenWidth * 0.77, screenHeight * 0.85]   // 点9
+        ];
+
+        // 手势密码划动路径
+        let gesturePath = [];
+        for (let i = 0; i < password.length; i++) {
+            let pointIndex = parseInt(password[i]) - 1;
+            gesturePath.push(points[pointIndex]);
+        }
+
+        // 执行手势划动
+        print(gesturePath)
+        gesture(5000, gesturePath);
+    } else {
+        console.log("无效的解锁模式");
+    }
+}
+
+
+'''
+
+
 def is_workday(api_key):
     return '''function GetNowDate(){
     // 获取当前日期，格式YYYYMMDD
@@ -51,20 +109,36 @@ function IsWorkday() {
 
 def kill_dingtalk():
     return '''function KillDingTalk(){
-    // 结束钉钉进程
-    app.openAppSetting("com.alibaba.android.rimet");  // 打开钉钉app详情页
+  // 结束钉钉进程
+  app.openAppSetting("com.alibaba.android.rimet");  // 打开钉钉app详情页
 
-    // 等待并点击“结束运行”按钮
-    var stopButton = desc("结束运行").findOne();  // 等待找到结束运行的文本
-    if (stopButton.isEnabled()) {
-        stopButton.click();  // 点击“结束运行”
+  // 等待并点击“结束运行”按钮
+  while (true) {
+    if (desc("结束运行").exists()) {
+        break;
     }else{
-        return 0
+        sleep(500);
     }
+  }
 
-    // 等待并点击“确定”按钮
-    var confirmButton = text("确定").findOne();  // 等待找到确定按钮
-    confirmButton.click();  // 点击“确定”
+  var stopButton = desc("结束运行").findOne();  // 找到结束运行的文本
+
+  if (stopButton.isEnabled()) {
+      stopButton.click();  // 点击“结束运行”
+  }else{
+      return 0
+  }
+
+  // 等待并点击“确定”按钮
+  while (true) {
+    if (text("确定").exists()) {
+        break;
+    }else{
+        sleep(500);
+    }
+  }
+  var confirmButton = text("确定").findOne();  // 等待找到确定按钮
+  confirmButton.click();  // 点击“确定”
 }
 
 
@@ -143,10 +217,24 @@ def trip_check():
 '''
 
 
-def autojs_main(api_key:str, show_console:bool, is_trip_check:bool):
+def autojs_main(is_unlock_phone:bool, api_key:str, show_console:bool, is_trip_check:bool, unlock_mode:str, unlock_password:str):
+    """
+    生成AutoJS主函数代码
+    :param api_key: apiHub的API Key
+    :param show_console: 是否显示控制台
+    :param is_trip_check: 是否外勤打卡
+    :return: 生成的AutoJS主函数代码
+    """
     show_console_code = ''
+    unlock_phone_code = ''
     workday_code = ''
     trip_check_code = ''
+
+    if is_unlock_phone:
+        unlock_phone_code = """
+    // 解锁手机
+    unlockPhone('%s', '%s');
+    """ % (unlock_mode, unlock_password)
 
     if show_console:
         show_console_code = show_console_log()
@@ -165,7 +253,9 @@ def autojs_main(api_key:str, show_console:bool, is_trip_check:bool):
 
     result = '''function start(companyName) {
     auto();     // 无障碍服务检查
-%s%s
+    device.wakeUpIfNeeded();     // 唤醒设备
+    device.keepScreenOn(3600 * 1000);   // 保持屏幕常亮，单位毫秒
+%s%s%s
     // 获取屏幕尺寸
     var screenWidth = device.width;
     var screenHeight = device.height;
@@ -175,10 +265,12 @@ def autojs_main(api_key:str, show_console:bool, is_trip_check:bool):
     OpenCheckInPage(companyName, 50);   // 打开打卡页面，部分手机需要多次尝试，可适当调整尝试次数
     StartCheckIn(companyName, screenWidth, screenHeight);       // 开始打卡
     %s
+    log("打卡完成");
+    device.cancelKeepingAwake();    // 取消屏幕常亮
 }
 
 
-''' % (show_console_code, workday_code, trip_check_code)
+''' % (show_console_code, unlock_phone_code, workday_code, trip_check_code)
 
     return result
 
@@ -190,6 +282,23 @@ def show_console_log():
 
 def gen_dingtalk_js(setting_json: dict):
     result = ''
+    is_unlock_phone = setting_json.get('unlockPhone')
+    unlock_method = setting_json.get('unlockMethod')
+    company_name = setting_json.get('companyName')
+
+    # 参数校验
+    if is_unlock_phone and unlock_method is None:
+        return '请选择解锁方式'
+
+    if is_unlock_phone and (unlock_method == 'passwordUnlock' or unlock_method == 'patternUnlock') and not setting_json.get('unlockPassword'):
+        return '请填写解锁密码'
+
+    if not company_name:
+        return '请填写钉钉上的完整公司名称'
+
+    if is_unlock_phone:
+        result += unlock_phone()
+
 
     if setting_json.get('apihubToken'):     # 追加是否工作日的判断
         result += is_workday(setting_json.get('apihubToken'))
@@ -205,7 +314,7 @@ def gen_dingtalk_js(setting_json: dict):
     if setting_json.get('tripCheck'):       # 追加外勤打卡的代码
         result += trip_check()
 
-    result += autojs_main(setting_json.get('apihubToken'), is_show_console, is_trip_check)
+    result += autojs_main(is_unlock_phone, setting_json.get('apihubToken'), is_show_console, is_trip_check, unlock_method, setting_json.get('unlockPassword'))
 
     result += 'start("%s");' % setting_json.get('companyName')  # 追加启动代码
 

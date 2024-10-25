@@ -5,109 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>钉钉自动打卡脚本生成器</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        header {
-            background-color: #007bff;
-            color: white;
-            padding: 15px 20px;
-            text-align: center;
-        }
-        .container {
-            display: flex;
-            justify-content: space-between;
-            padding: 20px;
-        }
-        .editor-section {
-            width: 78%;
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            height: 600px;
-            margin: 10px;
-        }
-        #editor {
-            height: 100%;
-        }
-
-        footer {
-            background-color: #f4f4f4;
-            text-align: center;
-            padding: 10px;
-            margin-top: 20px;
-            font-size: 14px;
-            color: #777;
-        }
-
-
-
-        .form-container {
-            margin: 10px;
-            padding: 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
-            min-width: 400px;
-        }
-
-        .form-group {
-            display: flex;
-            align-items: start;
-            margin-bottom: 15px;
-            background-color: #f5f5f5;
-            padding: 10px;
-            border-radius: 8px;
-        }
-
-        .form-group label {
-            flex: 3;
-            margin-right: 10px;
-            font-weight: bold;
-        }
-
-        .form-group input[type="text"] {
-            flex: 2;
-        }
-
-        .form-group input[type="checkbox"], .form-group input[type="radio"]{
-            flex: 1;
-
-        }
-
-        .form-group input[type="text"] {
-            padding: 5px;
-            border: 1px solid #ced4da;
-            border-radius: 5px;
-        }
-
-        .btn-submit {
-            width: 100%;
-            padding: 10px;
-            background-color: #007bff;
-            border: none;
-            color: white;
-            font-weight: bold;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .btn-submit:hover {
-            background-color: #0056b3;
-        }
-
-        .unlock-options {
-            margin: 0 0 10px 10px;
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            padding: 10px;
-        }
-
+        /* 样式部分保持不变 */
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; }
+        header { background-color: #007bff; color: white; padding: 15px 20px; text-align: center; }
+        .container { display: flex; justify-content: space-between; padding: 20px; }
+        .editor-section { width: 78%; background-color: white; padding: 20px; border-radius: 8px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); height: 600px; margin: 10px; }
+        #editor { height: 100%; }
+        footer { background-color: #f4f4f4; text-align: center; padding: 10px; margin-top: 20px; font-size: 14px; color: #777; }
+        .form-container { margin: 10px; padding: 20px; background-color: white; border-radius: 8px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); max-width: 400px; min-width: 400px; }
+        .form-group { display: flex; align-items: start; margin-bottom: 15px; background-color: #f5f5f5; padding: 10px; border-radius: 8px; }
+        .form-group label { flex: 3; margin-right: 10px; font-weight: bold; }
+        .form-group input[type="text"] { flex: 2; padding: 5px; border: 1px solid #ced4da; border-radius: 5px; }
+        .btn-submit { width: 100%; padding: 10px; background-color: #007bff; border: none; color: white; font-weight: bold; border-radius: 5px; cursor: pointer; }
+        .btn-submit:hover { background-color: #0056b3; }
+        .unlock-options { margin: 0 0 10px 10px; background-color: #f8f9fa; border-radius: 8px; padding: 10px; }
+        #passwordField { margin-left: 10px; }
     </style>
 </head>
 <body>
@@ -130,17 +42,24 @@
                 <div id="unlockOptions" class="unlock-options" style="display:none;">
                     <div class="form-group">
                         <label for="noPassword">无密码</label>
-                        <input type="radio" id="noPassword" name="unlockMethod" value="noPassword">
+                        <input type="radio" id="noPassword" name="unlockMethod" value="noPassword" onclick="togglePasswordField()">
                     </div>
                     <div class="form-group">
                         <label for="passwordUnlock">密码解锁</label>
-                        <input type="radio" id="passwordUnlock" name="unlockMethod" value="passwordUnlock">
+                        <input type="radio" id="passwordUnlock" name="unlockMethod" value="passwordUnlock" onclick="togglePasswordField()">
                     </div>
                     <div class="form-group">
                         <label for="patternUnlock">九宫格滑动解锁</label>
-                        <input type="radio" id="patternUnlock" name="unlockMethod" value="patternUnlock">
+                        <input type="radio" id="patternUnlock" name="unlockMethod" value="patternUnlock" onclick="togglePasswordField()">
                     </div>
                 </div>
+
+                <!-- 新增解锁密码输入框 -->
+                <div class="form-group" id="passwordField" style="display:none;">
+                    <label for="unlockPassword">解锁密码</label>
+                    <input type="text" id="unlockPassword" name="unlockPassword" placeholder="请输入解锁密码">
+                </div>
+
                 <div class="form-group">
                     <label for="apihubToken">跳过中国节假日</label>
                     <input type="text" id="apihubToken" name="apihubToken" placeholder="请输入apihub的Token">
@@ -159,7 +78,6 @@
             </form>
         </div>
 
-
         <div class="editor-section">
             <div id="editor"></div>
         </div>
@@ -171,7 +89,6 @@
 
     <script src='/static/js/monaco/min/vs/loader.js'></script>
     <script>
-        // 加载 Monaco Editor
         require.config({ paths: { 'vs': '/static/js/monaco/min/vs/' }});
         let editor;
         require(['vs/editor/editor.main'], function() {
@@ -183,14 +100,24 @@
             });
         });
 
-        // 显示或隐藏解锁选项
         function toggleUnlockOptions() {
             var unlockCheckbox = document.getElementById('unlockPhone');
             var unlockOptions = document.getElementById('unlockOptions');
             unlockOptions.style.display = unlockCheckbox.checked ? 'block' : 'none';
+            togglePasswordField();
         }
 
-        // 生成脚本并填入 Monaco Editor
+        // 新增控制“解锁密码”输入框的显示和隐藏
+        function togglePasswordField() {
+            var unlockMethod = document.querySelector('input[name="unlockMethod"]:checked');
+            var passwordField = document.getElementById('passwordField');
+            if (unlockMethod && (unlockMethod.value === "passwordUnlock" || unlockMethod.value === "patternUnlock")) {
+                passwordField.style.display = 'flex';
+            } else {
+                passwordField.style.display = 'none';
+            }
+        }
+
         function generateScript() {
             let showConsole = document.getElementById('showConsole').checked;
             let unlockPhone = document.getElementById('unlockPhone').checked;
@@ -198,18 +125,18 @@
             let apihubToken = document.getElementById('apihubToken').value;
             let companyName = document.getElementById('companyName').value;
             let tripCheck = document.getElementById('tripCheck').checked;
+            let unlockPassword = document.getElementById('unlockPassword').value;
 
-            // 创建一个对象来包含表单数据
             const data = {
                 showConsole: showConsole,
                 unlockPhone: unlockPhone,
                 unlockMethod: unlockMethod ? unlockMethod.value : null,
                 apihubToken: apihubToken,
                 companyName: companyName,
-                tripCheck: tripCheck
+                tripCheck: tripCheck,
+                unlockPassword: unlockPassword
             };
 
-            // 发送 POST 请求到后端
             fetch('/dingtalk_js', {
                 method: 'POST',
                 headers: {
@@ -217,11 +144,8 @@
                 },
                 body: JSON.stringify(data)
             })
-            // 返回的是字符串，不是json
             .then(response => response.text())
-
             .then(data => {
-                // 将后端返回的JS代码填入Monaco Editor中
                 if (data) {
                     editor.setValue(data);
                 } else {
