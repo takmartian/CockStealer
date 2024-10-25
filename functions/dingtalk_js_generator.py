@@ -272,7 +272,7 @@ function IsWorkday() {
     """ % (unlock_mode, unlock_password)
 
         if show_console:
-            show_console_code = show_console_log()
+            show_console_code = self.show_console_log()
 
         if api_key:
             workday_code = """
