@@ -6,7 +6,6 @@ from sys_handler import get_system_type, is_frozen
 import flask_app
 from stray import initial_stray
 
-
 # 创建日志处理器，日志文件最大为 1MB，最多保留 1 个备份文件
 handler = RotatingFileHandler('app.log', maxBytes=2 * 1024 * 1024, backupCount=1)
 

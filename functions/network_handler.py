@@ -8,8 +8,10 @@ def check_port(port):
     :return: bool
     """
 
+    # 创建socket对象
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
+        # 绑定端口
         s.bind(('0.0.0.0', port))
         s.close()
         return True
@@ -26,6 +28,5 @@ def get_random_port():
     port = random.randint(5200, 5299)
     while not check_port(port):
         port = random.randint(5000, 6000)
-
 
     return port

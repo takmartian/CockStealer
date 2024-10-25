@@ -1,7 +1,8 @@
 from flask import Blueprint, render_template, request, send_from_directory
-from functions.dingtalk_js_generator import gen_dingtalk_js
+from functions.dingtalk_js_generator import DingTalkJSGenerator
 
 main_routes = Blueprint('main', __name__)
+
 
 @main_routes.route('/gen_autoxjs', methods=['GET', 'POST'])
 def gen_autoxjs():
@@ -10,8 +11,8 @@ def gen_autoxjs():
 
 @main_routes.route('/dingtalk_js', methods=['POST'])
 def dingtalk_js():
-    print(request.json)
-    result = gen_dingtalk_js(request.json)
+    dtg = DingTalkJSGenerator(request.json)
+    result = dtg.gen_dingtalk_js()
     return result
 
 

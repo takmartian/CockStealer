@@ -5,6 +5,7 @@ from gevent import pywsgi
 
 import functions.network_handler as network_handler
 
+
 def create_flask_app():
     app = Flask(__name__)
     CORS(app)

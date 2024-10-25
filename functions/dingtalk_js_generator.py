@@ -1,5 +1,24 @@
-def unlock_phone():
-    return '''function unlockPhone(mode, password) {
+# This file is used to generate the AutoJS script for DingTalk check-in
+# The script is generated in JavaScript based on the settings provided by the user
+
+
+class DingTalkJSGenerator:
+    def __init__(self, setting_json: dict):
+        self.setting_json = setting_json
+        self.is_unlock_phone = self.setting_json.get('unlockPhone')
+        self.unlock_method = setting_json.get('unlockMethod')
+        self.unlock_password = setting_json.get('unlockPassword')
+        self.company_name = setting_json.get('companyName')
+        self.is_show_console = setting_json.get('showConsole')
+        self.is_trip_check = setting_json.get('tripCheck')
+        self.apihub_token = setting_json.get('apihubToken')
+
+    def unlock_phone(self):
+        """
+        生成解锁手机的代码
+        :return: 解锁手机的代码
+        """
+        return '''function unlockPhone(mode, password) {
     // 获取屏幕宽高
     let screenWidth = device.width;
     let screenHeight = device.height;
@@ -55,9 +74,13 @@ def unlock_phone():
 
 '''
 
-
-def is_workday(api_key):
-    return '''function GetNowDate(){
+    def is_workday(self, api_key):
+        """
+        生成判断是否工作日的代码
+        :param api_key: apiHub的API Key
+        :return: 判断是否工作日的代码
+        """
+        return '''function GetNowDate(){
     // 获取当前日期，格式YYYYMMDD
     var date = new Date();
     var year = date.getFullYear();
@@ -106,9 +129,12 @@ function IsWorkday() {
   
   ''' % api_key
 
-
-def kill_dingtalk():
-    return '''function KillDingTalk(){
+    def kill_dingtalk(self):
+        """
+        生成结束钉钉进程的代码
+        :return: 结束钉钉进程的代码
+        """
+        return '''function KillDingTalk(){
   // 结束钉钉进程
   app.openAppSetting("com.alibaba.android.rimet");  // 打开钉钉app详情页
 
@@ -144,9 +170,12 @@ def kill_dingtalk():
 
 '''
 
-
-def open_check_in_page():
-    return '''function OpenCheckInPage(companyName, maxRetries) {
+    def open_check_in_page(self):
+        """
+        生成打开打卡页面的代码
+        :return: 打开打卡页面的代码
+        """
+        return '''function OpenCheckInPage(companyName, maxRetries) {
     // 选择打卡企业页面
     let pageCheckIn = app.intent({
         action: "VIEW",
@@ -170,9 +199,12 @@ def open_check_in_page():
 
 '''
 
-
-def start_check_in():
-    return '''function StartCheckIn(companyName, width, height) {
+    def start_check_in(self):
+        """
+        生成开始打卡的代码
+        :return: 开始打卡的代码
+        """
+        return '''function StartCheckIn(companyName, width, height) {
     while (true) {
         if (id("com.alibaba.android.rimet:id/title_bar_name").text(companyName).exists()) {
             sleep(5000);
@@ -193,9 +225,12 @@ def start_check_in():
 
 '''
 
-
-def trip_check():
-    return '''function TripCheck(width, height) {
+    def trip_check(self):
+        """
+        生成外勤打卡的代码
+        :return: 外勤打卡的代码
+        """
+        return '''function TripCheck(width, height) {
     while (true) {
         if (id("com.alibaba.android.rimet:id/title_bar_name").text("外勤打卡").exists()) {
             sleep(5000);
@@ -216,31 +251,31 @@ def trip_check():
 
 '''
 
+    def autojs_main(self, is_unlock_phone: bool, api_key: str, show_console: bool, is_trip_check: bool,
+                    unlock_mode: str, unlock_password: str):
+        """
+        生成AutoJS主函数代码
+        :param api_key: apiHub的API Key
+        :param show_console: 是否显示控制台
+        :param is_trip_check: 是否外勤打卡
+        :return: 生成的AutoJS主函数代码
+        """
+        show_console_code = ''
+        unlock_phone_code = ''
+        workday_code = ''
+        trip_check_code = ''
 
-def autojs_main(is_unlock_phone:bool, api_key:str, show_console:bool, is_trip_check:bool, unlock_mode:str, unlock_password:str):
-    """
-    生成AutoJS主函数代码
-    :param api_key: apiHub的API Key
-    :param show_console: 是否显示控制台
-    :param is_trip_check: 是否外勤打卡
-    :return: 生成的AutoJS主函数代码
-    """
-    show_console_code = ''
-    unlock_phone_code = ''
-    workday_code = ''
-    trip_check_code = ''
-
-    if is_unlock_phone:
-        unlock_phone_code = """
+        if is_unlock_phone:
+            unlock_phone_code = """
     // 解锁手机
     unlockPhone('%s', '%s');
     """ % (unlock_mode, unlock_password)
 
-    if show_console:
-        show_console_code = show_console_log()
+        if show_console:
+            show_console_code = show_console_log()
 
-    if api_key:
-        workday_code = """
+        if api_key:
+            workday_code = """
     // 判断是否工作日
     if (!IsWorkday()) {
         log("今天不用上班");
@@ -248,10 +283,10 @@ def autojs_main(is_unlock_phone:bool, api_key:str, show_console:bool, is_trip_ch
     }
 """
 
-    if is_trip_check:
-        trip_check_code = '''TripCheck(screenWidth, screenHeight);  // 外勤打卡'''
+        if is_trip_check:
+            trip_check_code = '''TripCheck(screenWidth, screenHeight);  // 外勤打卡'''
 
-    result = '''function start(companyName) {
+        result = '''function start(companyName) {
     auto();     // 无障碍服务检查
     device.wakeUpIfNeeded();     // 唤醒设备
     device.keepScreenOn(3600 * 1000);   // 保持屏幕常亮，单位毫秒
@@ -272,50 +307,63 @@ def autojs_main(is_unlock_phone:bool, api_key:str, show_console:bool, is_trip_ch
 
 ''' % (show_console_code, unlock_phone_code, workday_code, trip_check_code)
 
-    return result
+        return result
 
-
-def show_console_log():
-    return """
+    def show_console_log(self):
+        """
+        生成显示控制台的代码
+        :return: 显示控制台的代码
+        """
+        return """
     console.show();
 """
 
-def gen_dingtalk_js(setting_json: dict):
-    result = ''
-    is_unlock_phone = setting_json.get('unlockPhone')
-    unlock_method = setting_json.get('unlockMethod')
-    company_name = setting_json.get('companyName')
+    def gen_dingtalk_js(self):
+        """
+        生成钉钉打卡脚本
+        :return: 生成的钉钉打卡脚本
+        """
+        result = ''
 
-    # 参数校验
-    if is_unlock_phone and unlock_method is None:
-        return '请选择解锁方式'
+        # 参数校验
+        if self.is_unlock_phone and self.unlock_method is None:
+            # 如果需要解锁手机，但是没有选择解锁方式
+            return '请选择解锁方式'
 
-    if is_unlock_phone and (unlock_method == 'passwordUnlock' or unlock_method == 'patternUnlock') and not setting_json.get('unlockPassword'):
-        return '请填写解锁密码'
+        if self.is_unlock_phone and (
+                self.unlock_method == 'passwordUnlock' or self.unlock_method == 'patternUnlock') and not self.unlock_password:
+            # 如果需要解锁手机，但是没有填写解锁密码
+            return '请填写解锁密码'
 
-    if not company_name:
-        return '请填写钉钉上的完整公司名称'
+        if not self.company_name:
+            # 如果没有填写公司名称
+            return '请填写钉钉上的完整公司名称'
 
-    if is_unlock_phone:
-        result += unlock_phone()
+        if self.is_unlock_phone:
+            # 如果需要解锁手机，追加解锁手机的代码
+            result += self.unlock_phone()
 
+        if self.apihub_token:
+            # 如果填写了apiHub的API Key，追加判断是否工作日的代码
+            result += self.is_workday(self.apihub_token)
 
-    if setting_json.get('apihubToken'):     # 追加是否工作日的判断
-        result += is_workday(setting_json.get('apihubToken'))
+        # 生成主流程代码
+        result += self.kill_dingtalk()  # 追加结束钉钉进程的代码
+        result += self.open_check_in_page()  # 追加打开打卡页面的代码
+        result += self.start_check_in()  # 追加开始打卡的代码
 
-    # 生成主流程代码
-    is_show_console = setting_json.get('showConsole')
-    is_trip_check = setting_json.get('tripCheck')
+        if self.is_trip_check:  # 追加外勤打卡的代码
+            result += self.trip_check()
 
-    result += kill_dingtalk()               # 追加结束钉钉进程的代码
-    result += open_check_in_page()          # 追加打开打卡页面的代码
-    result += start_check_in()              # 追加开始打卡的代码
+        result += self.autojs_main(
+            is_unlock_phone=self.is_unlock_phone,
+            api_key=self.apihub_token,
+            show_console=self.is_show_console,
+            is_trip_check=self.is_trip_check,
+            unlock_mode=self.unlock_method,
+            unlock_password=self.unlock_password
+        )
 
-    if setting_json.get('tripCheck'):       # 追加外勤打卡的代码
-        result += trip_check()
+        result += 'start("%s");' % self.company_name  # 追加启动代码
 
-    result += autojs_main(is_unlock_phone, setting_json.get('apihubToken'), is_show_console, is_trip_check, unlock_method, setting_json.get('unlockPassword'))
-
-    result += 'start("%s");' % setting_json.get('companyName')  # 追加启动代码
-
-    return result
+        return result
