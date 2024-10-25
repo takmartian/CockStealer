@@ -10,7 +10,9 @@
         header { background-color: #007bff; color: white; padding: 15px 20px; text-align: center; }
         .container { display: flex; justify-content: space-between; padding: 20px; }
         .editor-section { width: 78%; background-color: white; padding: 20px; border-radius: 8px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); height: 600px; margin: 10px; }
-        #editor { height: 100%; }
+        #editor { height: 90%; }
+        .editor-buttons { padding: 10px; background-color: #007bff; border: none; color: white; font-weight: bold; border-radius: 5px; cursor: pointer; margin: 10px 10px 0 0;}
+        .editor-buttons:hover { background-color: #0056b3; }
         footer { background-color: #f4f4f4; text-align: center; padding: 10px; margin-top: 20px; font-size: 14px; color: #777; }
         .form-container { margin: 10px; padding: 20px; background-color: white; border-radius: 8px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); max-width: 400px; min-width: 400px; }
         .form-group { display: flex; align-items: start; margin-bottom: 15px; background-color: #f5f5f5; padding: 10px; border-radius: 8px; }
@@ -80,6 +82,10 @@
 
         <div class="editor-section">
             <div id="editor"></div>
+            <div>
+                <button class="editor-buttons" onclick="copyToClipboard()">复制到剪贴板</button>
+                <button class="editor-buttons" onclick="saveToFile()">保存.js文件</button>
+            </div>
         </div>
     </div>
 
@@ -156,6 +162,25 @@
                 console.error('Error:', error);
                 editor.setValue('// 请求失败，请稍后重试');
             });
+        }
+
+        function copyToClipboard() {
+            const code = editor.getValue();
+            navigator.clipboard.writeText(code).then(() => {
+                alert('代码已复制到剪贴板');
+            }).catch(err => {
+                console.error('复制失败: ', err);
+            });
+        }
+
+        function saveToFile() {
+            const code = editor.getValue();
+            const blob = new Blob([code], { type: "text/javascript" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "DingTalk.js";
+            link.click();
+            URL.revokeObjectURL(link.href);  // 释放资源
         }
     </script>
 </body>
