@@ -64,7 +64,7 @@
   - 引入jsbeautifier，优化生成的AutoX脚本
   - 钉钉打卡脚本增加延时打卡功能
 
-- **v0.4.12**
+- **v0.4.12**![DingtalkDemo.png](../../Desktop/DingtalkDemo.png)
   - 更新日期：2024-10-26
   - 钉钉打卡脚本兼容OCR（使用Google ML kIT OCR模型）
   - 钉钉打卡脚本增加OCR识别当日是否需要上班功能
