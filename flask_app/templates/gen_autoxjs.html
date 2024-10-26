@@ -5,153 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>钉钉自动打卡脚本生成器</title>
     <style>
-        /* 样式部分保持不变 */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-
-        header {
-            background-color: #007bff;
-            color: white;
-            padding: 15px 20px;
-            text-align: center;
-        }
-
-        .container {
-            display: flex;
-            justify-content: space-between;
-            padding: 20px;
-        }
-
-        .editor-section {
-            width: 100%;
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            height: 70vh;
-            margin: 10px auto 10px 10px;
-            max-width: 1200px;
-            min-width: 400px;
-        }
-
-        #editor {
-            height: 90%;
-        }
-
-        .editor-buttons {
-            padding: 10px;
-            background-color: #007bff;
-            border: none;
-            color: white;
-            font-weight: bold;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 10px 10px 0 0;
-        }
-
-        .editor-buttons:hover {
-            background-color: #0056b3;
-        }
-
-        footer {
-            background-color: #f4f4f4;
-            text-align: center;
-            padding: 10px;
-            margin-top: 20px;
-            font-size: 14px;
-            color: #777;
-        }
-
-        .form-container {
-            margin: 10px 10px 10px auto;
-            padding: 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
-            min-width: 400px;
-        }
-
-        .form-group {
-            display: flex;
-            align-items: start;
-            margin-bottom: 15px;
-            background-color: #f5f5f5;
-            padding: 10px;
-            border-radius: 8px;
-        }
-
-        .form-group label {
-            flex: 3;
-            margin-right: 10px;
-            font-weight: bold;
-        }
-
-        .form-group input[type="text"] {
-            flex: 2;
-            padding: 5px;
-            border: 1px solid #ced4da;
-            border-radius: 5px;
-        }
-
-        .form-group-spt {
-            display: flex;
-            align-items: start;
-            margin-bottom: 15px;
-            background-color: #f5f5f5;
-            padding: 10px;
-            border-radius: 8px;
-        }
-
-        .form-group-spt label {
-            flex: 1;
-            margin-right: 10px;
-            font-weight: bold;
-        }
-
-        .form-group-spt input[type="text"] {
-            flex: 4;
-            padding: 5px;
-            border: 1px solid #ced4da;
-            border-radius: 5px;
-        }
-
-        .btn-submit {
-            width: 100%;
-            padding: 10px;
-            background-color: #007bff;
-            border: none;
-            color: white;
-            font-weight: bold;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .btn-submit:hover {
-            background-color: #0056b3;
-        }
-
-        .unlock-options {
-            margin: 0 0 10px 10px;
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            padding: 10px;
-        }
-
-        #passwordField {
-            margin-left: 10px;
-        }
-
-        #wxPushSetting {
-            margin: 10px;
-            padding: 10px;
-            background-color: #f8f9fa;
-            border-radius: 8px;
-        }
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; }
+        header { background-color: #007bff; color: white; padding: 15px 20px; text-align: center; }
+        .container { display: flex; justify-content: space-between; padding: 20px; }
+        .editor-section { width: 100%; background-color: white; padding: 20px; border-radius: 8px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); height: 70vh; margin: 10px auto 10px 10px; max-width: 1200px; min-width: 400px; }
+        #editor { height: 90%; }
+        .editor-buttons { padding: 10px; background-color: #007bff; border: none; color: white; font-weight: bold; border-radius: 5px; cursor: pointer; margin: 10px 10px 0 0; }
+        .editor-buttons:hover { background-color: #0056b3; }
+        footer { background-color: #f4f4f4; text-align: center; padding: 10px; margin-top: 20px; font-size: 14px; color: #777; }
+        .form-container { margin: 10px 10px 10px auto; padding: 20px; background-color: white; border-radius: 8px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); max-width: 400px; min-width: 400px; }
+        .form-group { display: flex; align-items: start; margin-bottom: 15px; background-color: #f5f5f5; padding: 10px; border-radius: 8px; }
+        .form-group label { flex: 3; margin-right: 10px; font-weight: bold; }
+        .form-group input[type="text"] { flex: 2; padding: 5px; border: 1px solid #ced4da; border-radius: 5px; }
+        .form-group-spt { display: flex; align-items: start; margin-bottom: 15px; background-color: #f5f5f5; padding: 10px; border-radius: 8px; }
+        .form-group-spt label { flex: 1; margin-right: 10px; font-weight: bold; }
+        .form-group-spt input[type="text"] { flex: 4; padding: 5px; border: 1px solid #ced4da; border-radius: 5px; }
+        .btn-submit { width: 100%; padding: 10px; background-color: #007bff; border: none; color: white; font-weight: bold; border-radius: 5px; cursor: pointer; }
+        .btn-submit:hover { background-color: #0056b3; }
+        .second-options { margin: 0 0 10px 10px; background-color: #f8f9fa; border-radius: 8px; padding: 10px; }
+        #passwordField { margin-left: 10px; }
+        #apiHubsKeyField { margin-left: 10px; }
+        #wxPushSetting { margin: 10px; padding: 10px; background-color: #f8f9fa; border-radius: 8px; }
     </style>
 </head>
 <body>
@@ -171,7 +45,7 @@
                 <label for="unlockPhone">是否需要解锁手机</label>
                 <input type="checkbox" id="unlockPhone" name="unlockPhone" onclick="toggleUnlockOptions()">
             </div>
-            <div id="unlockOptions" class="unlock-options" style="display:none;">
+            <div id="unlockOptions" class="second-options" style="display:none;">
                 <div class="form-group">
                     <label for="noPassword">无密码</label>
                     <input type="radio" id="noPassword" name="unlockMethod" value="noPassword"
@@ -188,16 +62,33 @@
                            onclick="togglePasswordField()">
                 </div>
             </div>
-
-            <!-- 新增解锁密码输入框 -->
             <div class="form-group" id="passwordField" style="display:none;">
                 <label for="unlockPassword">解锁密码</label>
                 <input type="text" id="unlockPassword" name="unlockPassword" placeholder="请输入解锁密码">
             </div>
-
             <div class="form-group">
-                <label for="apihubToken">跳过中国节假日</label>
-                <input type="text" id="apihubToken" name="apihubToken" placeholder="请输入apihub的Token">
+                <label for="skipHoliday">跳过休息日</label>
+                <input type="checkbox" id="skipHoliday" name="skipHoliday" onclick="toggleSkipHoliday()">
+            </div>
+            <div id="skipHolidayOptions" class="second-options" style="display:none;">
+                <div class="form-group">
+                    <label for="ocrSkip">OCR识别打卡界面</label>
+                    <input type="radio" id="ocrSkip" name="skipHolidayMode" value="ocrSkip"
+                           onclick="toggleApiHubsApiKey()">
+                </div>
+                <div class="form-group">
+                    <label for="apiHubs">ApiHubs接口</label>
+                    <input type="radio" id="apiHubs" name="skipHolidayMode" value="apiHubs"
+                           onclick="toggleApiHubsApiKey()">
+                </div>
+                <div class="form-group" id="apiHubsKeyField" style="display:none;">
+                    <label for="apiHubsKey">ApiHubs密钥</label>
+                    <input type="text" id="apiHubsKey" name="apiHubsKey" placeholder="请输ApiHubs ApiKey">
+                </div>
+
+                <p style="padding-left: 10px; margin: auto">
+                    <a href="http://www.apihubs.cn/#/holiday">申请ApiHubs接口</a>
+                </p>
             </div>
             <div class="form-group">
                 <label for="companyName">钉钉上显示的企业全称</label>
@@ -253,6 +144,22 @@
         });
     });
 
+
+    // 控制“跳过休息日”选项区域的显示和隐藏
+    function toggleSkipHoliday() {
+        var skipHolidayCheckbox = document.getElementById('skipHoliday');
+        var skipHolidayOptions = document.getElementById('skipHolidayOptions');
+        skipHolidayOptions.style.display = skipHolidayCheckbox.checked ? 'block' : 'none';
+
+    }
+
+    // 控制“ApiHubs密钥”输入框的显示和隐藏
+    function toggleApiHubsApiKey() {
+        var skipHolidayMode = document.querySelector('input[name="skipHolidayMode"]:checked');
+        var apiHubsKeyField = document.getElementById('apiHubsKeyField');
+        apiHubsKeyField.style.display = skipHolidayMode && skipHolidayMode.value === "apiHubs" ? 'flex' : 'none';
+    }
+
     // 控制“解锁选项”区域的显示和隐藏
     function toggleUnlockOptions() {
         var unlockCheckbox = document.getElementById('unlockPhone');
@@ -287,7 +194,9 @@
         let showConsole = document.getElementById('showConsole').checked;
         let unlockPhone = document.getElementById('unlockPhone').checked;
         let unlockMethod = document.querySelector('input[name="unlockMethod"]:checked');
-        let apihubToken = document.getElementById('apihubToken').value;
+        let skipHoliday = document.getElementById('skipHoliday').checked;
+        let skipHolidayMode = document.querySelector('input[name="skipHolidayMode"]:checked');
+        let apiHubsToken = document.getElementById('apiHubsKey').value;
         let companyName = document.getElementById('companyName').value;
         let tripCheck = document.getElementById('tripCheck').checked;
         let unlockPassword = document.getElementById('unlockPassword').value;
@@ -298,7 +207,9 @@
             showConsole: showConsole,
             unlockPhone: unlockPhone,
             unlockMethod: unlockMethod ? unlockMethod.value : null,
-            apihubToken: apihubToken,
+            skipHoliday: skipHoliday,
+            skipHolidayMode: skipHolidayMode ? skipHolidayMode.value : null,
+            apiHubsToken: apiHubsToken,
             companyName: companyName,
             tripCheck: tripCheck,
             unlockPassword: unlockPassword,
@@ -325,6 +236,7 @@
                 console.error('Error:', error);
                 editor.setValue('// 请求失败，请稍后重试');
             });
+        editor.getAction('editor.action.formatDocument').run();
     }
 
     function copyToClipboard() {
