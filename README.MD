@@ -28,7 +28,7 @@
 - 关闭：点击系统托盘图标，取消选择“保持Teams在线”
 
 ### 3.2. Dingtalk自动签到脚本生成器
-![DingtalkDemo.jpg](images/DingtalkDemo.jpg)
+![DingtalkDemo.png](images/DingtalkDemo.png)
 - 功能：生成钉钉自动签到脚本（AutoX脚本）
 - 使用：点击系统托盘图标，选择“钉钉打卡脚本”，自动打开浏览器，按需要生成脚本
 - 注意：生成的脚本仅供参考，具体使用请根据实际情况修改
@@ -64,7 +64,7 @@
   - 引入jsbeautifier，优化生成的AutoX脚本
   - 钉钉打卡脚本增加延时打卡功能
 
-- **v0.4.12**![DingtalkDemo.png](../../Desktop/DingtalkDemo.png)
+- **v0.4.12**!
   - 更新日期：2024-10-26
   - 钉钉打卡脚本兼容OCR（使用Google ML kIT OCR模型）
   - 钉钉打卡脚本增加OCR识别当日是否需要上班功能
