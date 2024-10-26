@@ -56,7 +56,7 @@ def initial_stray():
         Item('钉钉打卡脚本', action=open_gen_autoxjs),
         Item('帮助', Menu(
             Item('关于本软件', action=about_this),
-            Item('版本号: v0.4.12', action=None, enabled=False)
+            Item('版本号: v0.5.14', action=None, enabled=False)
         )
              ),
         Item('退出', on_quit),

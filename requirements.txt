@@ -4,3 +4,4 @@ pystray~=0.19.5
 pillow~=10.4.0
 PyAutoGUI~=0.9.54
 gevent~=24.10.3
+jsbeautifier~=1.15.1

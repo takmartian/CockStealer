@@ -11,7 +11,6 @@ def gen_autoxjs():
 
 @main_routes.route('/dingtalk_js', methods=['POST'])
 def dingtalk_js():
-    print(request.json)
     dtg = DingTalkJSGenerator(request.json)
     result = dtg.gen_dingtalk_js()
     return result

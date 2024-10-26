@@ -1,11 +1,18 @@
 # This file is used to generate the AutoJS script for DingTalk check-in
 # The script is generated in JavaScript based on the settings provided by the user
 
+import functions.js_beautifier as js_beautifier
 
 class DingTalkJSGenerator:
     def __init__(self, setting_json: dict):
-        self.setting_json = setting_json
-        self.is_unlock_phone = self.setting_json.get('unlockPhone')
+        """
+        初始化
+        :param setting_json: 设置的JSON数据
+        """
+
+        self.is_delay = setting_json.get('delayCheck')
+        self.delay_time = int(setting_json.get('delayTime')) if setting_json.get('delayTime') else 0
+        self.is_unlock_phone = setting_json.get('unlockPhone')
         self.unlock_method = setting_json.get('unlockMethod')
         self.unlock_password = setting_json.get('unlockPassword')
         self.company_name = setting_json.get('companyName')
@@ -16,6 +23,16 @@ class DingTalkJSGenerator:
         self.api_hubs_token = setting_json.get('apiHubsToken')
         self.is_wx_push = setting_json.get('wxPush')
         self.wx_spt = setting_json.get('wxSPT')
+
+    def delay_check(self, delay_time:int):
+        """
+        生成延迟打卡的代码
+        :return: 延迟打卡的代码
+        """
+        return '''
+    let randomInt = Math.floor(Math.random() * %d);
+    sleep(randomInt * 60 * 1000);  // 延迟%d秒打卡
+''' % (delay_time, delay_time)
 
     def unlock_phone(self):
         """
@@ -298,8 +315,7 @@ function IsWorkday() {
 '''
 
 
-    def autojs_main(self, is_unlock_phone: bool, api_key: str, show_console: bool, is_trip_check: bool,
-                    unlock_mode: str, unlock_password: str, is_wx_push: bool, wx_spt: str):
+    def autojs_main(self):
         """
         生成AutoJS主函数代码
         :param api_key: apiHub的API Key
@@ -307,25 +323,23 @@ function IsWorkday() {
         :param is_trip_check: 是否外勤打卡
         :return: 生成的AutoJS主函数代码
         """
-        show_console_code = ''
+
         unlock_phone_code = ''
         api_hubs_workday_code = ''
         ocr_workday_code = ''
         trip_check_code = ''
 
-        if is_unlock_phone:
+        delay_code = self.delay_check(self.delay_time) if self.is_delay else ''
+
+        if self.is_unlock_phone:
             unlock_phone_code = """
     // 解锁手机
     unlockPhone('%s', '%s');
-    """ % (unlock_mode, unlock_password)
+    """ % (self.unlock_method, self.unlock_password)
 
-        if show_console:
-            show_console_code = self.show_console_log()
+        show_console_code = self.show_console_log() if self.is_show_console else ''
 
-        if self.is_wx_push:
-            wx_push_code = "wxPush('%s', '今日休息，取消打卡');  // 微信推送" % wx_spt
-        else:
-            wx_push_code = ''
+        wx_push_code = "wxPush('%s', '今日休息，取消打卡');  // 微信推送" % self.wx_spt if self.is_wx_push else ''
 
         if self.is_skip_holiday and self.skip_holiday_mode == 'apiHubs':
             api_hubs_workday_code = """// 判断是否工作日
@@ -348,17 +362,14 @@ function IsWorkday() {
         log("今天上班，开始打卡");
     }""" % wx_push_code
 
-        if is_trip_check:
-            trip_check_code = '''TripCheck(screenWidth, screenHeight);  // 外勤打卡'''
+        trip_check_code = "TripCheck(screenWidth, screenHeight);  // 外勤打卡" if self.is_trip_check else ''
 
-        if is_wx_push:
-            wx_push_code ="wxPush('%s', '今日要上班，打卡成功');  // 微信推送" % wx_spt
-        else:
-            wx_push_code = ''
-
+        wx_push_code_success = "wxPush('%s', '今日要上班，打卡成功');  // 微信推送" % self.wx_spt if self.is_wx_push else ''
+        wx_push_code_failed = "wxPush('%s', '【注意】今日要上班，但打卡可能失败了，请打开钉钉核实');  // 微信推送" % self.wx_spt if self.is_wx_push else ''
 
         result = '''function start(companyName) {
     auto();                             // 无障碍服务检查
+    %s
     device.wakeUpIfNeeded();            // 唤醒设备
     device.keepScreenOn(3600 * 1000);   // 保持屏幕常亮，单位毫秒
     %s
@@ -376,17 +387,17 @@ function IsWorkday() {
     %s
     sleep(3000);
     if (ocrCheck("打卡成功")) {
-        wxPush('%s', '今日要上班，打卡成功');  // 微信推送
+        %s
         log("打卡完成");
     }else{
-        wxPush('%s', '【注意】今日要上班，但打卡可能失败了，请打开钉钉核实');  // 微信推送
+        %s
         log("【注意】今日要上班，但打卡可能失败了，请打开钉钉核实");
     }
     device.cancelKeepingAwake();        // 取消屏幕常亮
 }
 
 
-''' % (show_console_code, unlock_phone_code, api_hubs_workday_code, ocr_workday_code, trip_check_code, wx_spt, wx_spt)
+''' % (delay_code, show_console_code, unlock_phone_code, api_hubs_workday_code, ocr_workday_code, trip_check_code, wx_push_code_success, wx_push_code_failed)
 
         return result
 
@@ -398,6 +409,14 @@ function IsWorkday() {
         result = ''
 
         # 参数校验
+        if self.is_delay and self.delay_time is None:
+            # 如果需要延迟打卡，但是没有填写延迟时间
+            return '请填写延迟时间'
+
+        if self.is_delay and self.delay_time > 30:
+            # 如果延迟时间大于30分钟
+            return '延迟时间不能超过30分钟，除非你知道为什么，并且修改后面的代码'
+
         if self.is_unlock_phone and self.unlock_method is None:
             # 如果需要解锁手机，但是没有选择解锁方式
             return '请选择解锁方式'
@@ -449,20 +468,10 @@ function IsWorkday() {
             result += self.wx_push()
         # ↑############################## 生成模块代码 ##############################
 
-        # ↓############################## 生成主流程代码 ##############################
-        result += self.autojs_main(
-            is_unlock_phone=self.is_unlock_phone,
-            api_key=self.api_hubs_token,
-            show_console=self.is_show_console,
-            is_trip_check=self.is_trip_check,
-            unlock_mode=self.unlock_method,
-            unlock_password=self.unlock_password,
-            is_wx_push=self.is_wx_push,
-            wx_spt=self.wx_spt
-        )
-        # ↑############################## 生成主流程代码 ##############################
+        # 生成主流程代码
+        result += self.autojs_main()
 
         result += 'start("%s");' % self.company_name  # 追加启动代码
 
-        return result
+        return js_beautifier.js_beautify(result)
 

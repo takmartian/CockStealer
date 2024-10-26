@@ -38,6 +38,14 @@
     <div class="form-container">
         <form id="settingsForm" onsubmit="event.preventDefault(); generateScript();">
             <div class="form-group">
+                <label for="delayCheck">随机延时打卡</label>
+                <input type="checkbox" id="delayCheck" name="delayCheck" onclick="toggleDelayCheck()">
+            </div>
+            <div id="delayTimeBox" class="form-group" style="display:none; margin-left: 10px;">
+                <label for="delayTime">随机延时时间（分钟）</label>
+                <input type="text" id="delayTime" name="delayTime" placeholder="请输入延时时间" value="30" oninput = "value=value.replace(/[^\d]/g,'')">
+            </div>
+            <div class="form-group">
                 <label for="showConsole">显示控制台</label>
                 <input type="checkbox" id="showConsole" name="showConsole">
             </div>
@@ -48,7 +56,7 @@
             <div id="unlockOptions" class="second-options" style="display:none;">
                 <div class="form-group">
                     <label for="noPassword">无密码</label>
-                    <input type="radio" id="noPassword" name="unlockMethod" value="noPassword"
+                    <input type="radio" id="noPassword" name="unlockMethod" value="noPassword" checked="checked"
                            onclick="togglePasswordField()">
                 </div>
                 <div class="form-group">
@@ -73,7 +81,7 @@
             <div id="skipHolidayOptions" class="second-options" style="display:none;">
                 <div class="form-group">
                     <label for="ocrSkip">OCR识别打卡界面</label>
-                    <input type="radio" id="ocrSkip" name="skipHolidayMode" value="ocrSkip"
+                    <input type="radio" id="ocrSkip" name="skipHolidayMode" value="ocrSkip" checked="checked"
                            onclick="toggleApiHubsApiKey()">
                 </div>
                 <div class="form-group">
@@ -132,8 +140,11 @@
 </footer>
 
 <script src='/static/js/monaco/min/vs/loader.js'></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.15.1/beautify.min.js" integrity="sha512-kElKX79OYM/vf2AU+lF4Zsi3AnKds70Mc6fRBImpwQzdZNbju6SyeTBBOUe1N9q1P456v1F01HAsjjWZkXIS4Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.15.1/beautify-html.min.js" integrity="sha512-9oipLBY8N19ej4XlfPFHfdKkqn8FnAEsucbkycMoLthN77bImVWZ0GtLMfCrXBqpTetBn2eM9N1pliZJC7IrNA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.15.1/beautify-css.min.js" integrity="sha512-GS3bO88bff1ieJ8ZKeWhjlK5Y6Mwvu4WmQ8gdIgbeSyp7iBaqSVxCUGgOV9RjiiQgoci/HW9n7IVn3o670AY8w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
-    require.config({paths: {'vs': '/static/js/monaco/min/vs/'}});
+    require.config({paths: {'vs': '/static/js/monaco/min/vs'}});
     let editor;
     require(['vs/editor/editor.main'], function () {
         editor = monaco.editor.create(document.getElementById('editor'), {
@@ -144,6 +155,12 @@
         });
     });
 
+    // 控制“延时打卡”选项区域的显示和隐藏
+    function toggleDelayCheck() {
+        var delayCheck = document.getElementById('delayCheck');
+        var delayTimeGroup = document.getElementById('delayTimeBox');
+        delayTimeGroup.style.display = delayCheck.checked ? 'flex' : 'none';
+    }
 
     // 控制“跳过休息日”选项区域的显示和隐藏
     function toggleSkipHoliday() {
@@ -191,6 +208,8 @@
     }
 
     function generateScript() {
+        let delayCheck = document.getElementById('delayCheck').checked;
+        let delayTime = document.getElementById('delayTime').value;
         let showConsole = document.getElementById('showConsole').checked;
         let unlockPhone = document.getElementById('unlockPhone').checked;
         let unlockMethod = document.querySelector('input[name="unlockMethod"]:checked');
@@ -204,6 +223,8 @@
         let wxSPT = document.getElementById('wxSPT').value;
 
         const data = {
+            delayCheck: delayCheck,
+            delayTime: delayCheck ? delayTime : null,
             showConsole: showConsole,
             unlockPhone: unlockPhone,
             unlockMethod: unlockMethod ? unlockMethod.value : null,
@@ -236,7 +257,6 @@
                 console.error('Error:', error);
                 editor.setValue('// 请求失败，请稍后重试');
             });
-        editor.getAction('editor.action.formatDocument').run();
     }
 
     function copyToClipboard() {
