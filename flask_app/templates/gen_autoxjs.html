@@ -27,13 +27,15 @@
         }
 
         .editor-section {
-            width: 78%;
+            width: 100%;
             background-color: white;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            height: 600px;
-            margin: 10px;
+            height: 70vh;
+            margin: 10px auto 10px 10px;
+            max-width: 1200px;
+            min-width: 400px;
         }
 
         #editor {
@@ -65,7 +67,7 @@
         }
 
         .form-container {
-            margin: 10px;
+            margin: 10px 10px 10px auto;
             padding: 20px;
             background-color: white;
             border-radius: 8px;
@@ -96,6 +98,28 @@
             border-radius: 5px;
         }
 
+        .form-group-spt {
+            display: flex;
+            align-items: start;
+            margin-bottom: 15px;
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .form-group-spt label {
+            flex: 1;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .form-group-spt input[type="text"] {
+            flex: 4;
+            padding: 5px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+        }
+
         .btn-submit {
             width: 100%;
             padding: 10px;
@@ -120,6 +144,13 @@
 
         #passwordField {
             margin-left: 10px;
+        }
+
+        #wxPushSetting {
+            margin: 10px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
         }
     </style>
 </head>
@@ -176,6 +207,20 @@
                 <label for="tripCheck">外勤打卡</label>
                 <input type="checkbox" id="tripCheck" name="tripCheck">
             </div>
+            <div class="form-group">
+                <label for="wxPush">微信推送</label>
+                <input type="checkbox" id="wxPush" name="wxPush" onclick="toggleWxPusher()">
+            </div>
+
+            <div id="wxPushSetting" style="display:none;">
+                <img src="https://wxpusher.zjiecode.com/api/qrcode/RwjGLMOPTYp35zSYQr0HxbCPrV9eU0wKVBXU1D5VVtya0cQXEJWPjqBdW3gKLifS.jpg" alt="" width="100px" height="100px">
+                <p>扫码关注推送公众号，并获取SPT，将获取到的SPT填写到下方。</p>
+                <p>如取消了关注公众号则无法收到推送，如重新关注需重新获取SPT。</p>
+                <div class="form-group-spt">
+                    <label for="wxSPT">SPT</label>
+                    <input type="text" id="wxSPT" name="wxSPT">
+                </div>
+            </div>
             <div>
                 <button type="submit" class="btn-submit">生成脚本</button>
             </div>
@@ -208,6 +253,7 @@
         });
     });
 
+    // 控制“解锁选项”区域的显示和隐藏
     function toggleUnlockOptions() {
         var unlockCheckbox = document.getElementById('unlockPhone');
         var unlockOptions = document.getElementById('unlockOptions');
@@ -215,7 +261,7 @@
         togglePasswordField();
     }
 
-    // 新增控制“解锁密码”输入框的显示和隐藏
+    // 控制“解锁密码”输入框的显示和隐藏
     function togglePasswordField() {
         var unlockMethod = document.querySelector('input[name="unlockMethod"]:checked');
         var passwordField = document.getElementById('passwordField');
@@ -223,6 +269,17 @@
             passwordField.style.display = 'flex';
         } else {
             passwordField.style.display = 'none';
+        }
+    }
+
+    // 控制“微信推送”设置的显示和隐藏
+    function toggleWxPusher() {
+        var unlockMethod = document.querySelector('input[name="wxPush"]:checked');
+        var wxPushSetting = document.getElementById('wxPushSetting');
+        if (unlockMethod) {
+            wxPushSetting.style.display = 'block';
+        } else {
+            wxPushSetting.style.display = 'none';
         }
     }
 
@@ -234,6 +291,8 @@
         let companyName = document.getElementById('companyName').value;
         let tripCheck = document.getElementById('tripCheck').checked;
         let unlockPassword = document.getElementById('unlockPassword').value;
+        let wxPush = document.getElementById('wxPush').checked;
+        let wxSPT = document.getElementById('wxSPT').value;
 
         const data = {
             showConsole: showConsole,
@@ -242,7 +301,9 @@
             apihubToken: apihubToken,
             companyName: companyName,
             tripCheck: tripCheck,
-            unlockPassword: unlockPassword
+            unlockPassword: unlockPassword,
+            wxPush: wxPush,
+            wxSPT: wxSPT
         };
 
         fetch('/dingtalk_js', {

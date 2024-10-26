@@ -12,6 +12,8 @@ class DingTalkJSGenerator:
         self.is_show_console = setting_json.get('showConsole')
         self.is_trip_check = setting_json.get('tripCheck')
         self.apihub_token = setting_json.get('apihubToken')
+        self.is_wx_push = setting_json.get('wxPush')
+        self.wx_spt = setting_json.get('wxSPT')
 
     def unlock_phone(self):
         """
@@ -251,8 +253,30 @@ function IsWorkday() {
 
 '''
 
+    def wx_push(self):
+        """
+        生成微信推送的代码
+        :return: 生成的微信推送的代码
+        """
+        return '''function wxPush(wxSPT) {
+    var url = "https://wxpusher.zjiecode.com/api/send/message/" + wxSPT + "/钉钉打卡成功";
+    var res = http.get(url);
+}
+
+
+'''
+
+    def show_console_log(self):
+        """
+        生成显示控制台的代码
+        :return: 显示控制台的代码
+        """
+        return """
+    console.show();
+"""
+
     def autojs_main(self, is_unlock_phone: bool, api_key: str, show_console: bool, is_trip_check: bool,
-                    unlock_mode: str, unlock_password: str):
+                    unlock_mode: str, unlock_password: str, is_wx_push: bool, wx_spt: str):
         """
         生成AutoJS主函数代码
         :param api_key: apiHub的API Key
@@ -264,6 +288,7 @@ function IsWorkday() {
         unlock_phone_code = ''
         workday_code = ''
         trip_check_code = ''
+        wx_push_code = ''
 
         if is_unlock_phone:
             unlock_phone_code = """
@@ -286,6 +311,10 @@ function IsWorkday() {
         if is_trip_check:
             trip_check_code = '''TripCheck(screenWidth, screenHeight);  // 外勤打卡'''
 
+        if is_wx_push:
+            wx_push_code = '''wxPush('%s');  // 微信推送''' % wx_spt
+
+
         result = '''function start(companyName) {
     auto();     // 无障碍服务检查
     device.wakeUpIfNeeded();     // 唤醒设备
@@ -300,23 +329,15 @@ function IsWorkday() {
     OpenCheckInPage(companyName, 50);   // 打开打卡页面，部分手机需要多次尝试，可适当调整尝试次数
     StartCheckIn(companyName, screenWidth, screenHeight);       // 开始打卡
     %s
+    %s
     log("打卡完成");
     device.cancelKeepingAwake();    // 取消屏幕常亮
 }
 
 
-''' % (show_console_code, unlock_phone_code, workday_code, trip_check_code)
+''' % (show_console_code, unlock_phone_code, workday_code, trip_check_code, wx_push_code)
 
         return result
-
-    def show_console_log(self):
-        """
-        生成显示控制台的代码
-        :return: 显示控制台的代码
-        """
-        return """
-    console.show();
-"""
 
     def gen_dingtalk_js(self):
         """
@@ -339,6 +360,11 @@ function IsWorkday() {
             # 如果没有填写公司名称
             return '请填写钉钉上的完整公司名称'
 
+        if self.is_wx_push and not self.wx_spt:
+            # 如果需要微信推送，但是没有填写微信SPT
+            return '请填写微信SPT'
+
+        # ↓############################## 生成模块代码 ##############################
         if self.is_unlock_phone:
             # 如果需要解锁手机，追加解锁手机的代码
             result += self.unlock_phone()
@@ -347,23 +373,33 @@ function IsWorkday() {
             # 如果填写了apiHub的API Key，追加判断是否工作日的代码
             result += self.is_workday(self.apihub_token)
 
-        # 生成主流程代码
         result += self.kill_dingtalk()  # 追加结束钉钉进程的代码
         result += self.open_check_in_page()  # 追加打开打卡页面的代码
         result += self.start_check_in()  # 追加开始打卡的代码
 
-        if self.is_trip_check:  # 追加外勤打卡的代码
+        if self.is_trip_check:
+            # 追加外勤打卡的代码
             result += self.trip_check()
 
+        if self.is_wx_push:
+            # 如果需要微信推送，追加微信推送的代码
+            result += self.wx_push()
+        # ↑############################## 生成模块代码 ##############################
+
+        # ↓############################## 生成主流程代码 ##############################
         result += self.autojs_main(
             is_unlock_phone=self.is_unlock_phone,
             api_key=self.apihub_token,
             show_console=self.is_show_console,
             is_trip_check=self.is_trip_check,
             unlock_mode=self.unlock_method,
-            unlock_password=self.unlock_password
+            unlock_password=self.unlock_password,
+            is_wx_push=self.is_wx_push,
+            wx_spt=self.wx_spt
         )
+        # ↑############################## 生成主流程代码 ##############################
 
         result += 'start("%s");' % self.company_name  # 追加启动代码
 
         return result
+
