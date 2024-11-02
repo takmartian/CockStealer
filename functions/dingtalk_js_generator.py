@@ -448,7 +448,7 @@ function IsWorkday() {
             # 如果需要解锁手机，追加解锁手机的代码
             result += self.unlock_phone()
 
-        if self.is_skip_holiday and self.skip_holiday_mode == 'apiHub' and self.api_hubs_token:
+        if self.is_skip_holiday and self.skip_holiday_mode == 'apiHubs' and self.api_hubs_token:
             # 如果填写了apiHub的API Key，追加判断是否工作日的代码
             result += self.is_workday(self.api_hubs_token)
 
