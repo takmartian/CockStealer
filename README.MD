@@ -45,9 +45,9 @@
 
 ## 4. 打包方法
 > 本工具包使用pyinstaller可打包成Mac、Windows、Linux可执行文件
+
 1. 安装pyinstaller
 ```pip install pyinstaller```
-
 
 2. 打包
   - Mac: ```pyinstaller -w -n CockStealer --noconfirm -i images/app_icon.ico --add-data "images/tray_icon.ico:images" --add-data "flask_app/static:flask_app/static" --add-data "flask_app/templates:flask_app/templates" --osx-bundle-identifier com.hardcore.cockstealer main.py```
@@ -59,6 +59,10 @@
 > Mac打包的单文件出现Permission Denied情况，暂未解决
 
 ## 5. 更新日志
+- **v0.5.15**
+  - 更新日期：2024-11-02
+  - 修复钉钉打卡脚本运行时多次请求截图权限会导致程序卡死的问题
+
 - **v0.5.14**
   - 更新日期：2024-10-26
   - 引入jsbeautifier，优化生成的AutoX脚本
