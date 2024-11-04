@@ -326,7 +326,6 @@ function IsWorkday() {
         unlock_phone_code = ''
         api_hubs_workday_code = ''
         ocr_workday_code = ''
-        request_screen_capture_code = ''
 
         delay_code = self.delay_check(self.delay_time) if self.is_delay else ''
 
@@ -351,7 +350,6 @@ function IsWorkday() {
     }""" % wx_push_code
 
         elif self.is_skip_holiday and self.skip_holiday_mode == 'ocrSkip':
-            request_screen_capture_code = "requestScreenCapture();"     # 请求截图权限
             ocr_workday_code = """// 判断是否工作日
     sleep(3000);
     if (ocrCheck("今日休息")) {
@@ -369,9 +367,9 @@ function IsWorkday() {
 
         result = '''function start(companyName) {
     auto();                             // 无障碍服务检查
-    %s
     device.wakeUpIfNeeded();            // 唤醒设备
     device.keepScreenOn(3600 * 1000);   // 保持屏幕常亮，单位毫秒
+    requestScreenCapture();             // 请求截图权限
     %s
     %s
     %s
@@ -398,7 +396,7 @@ function IsWorkday() {
 }
 
 
-''' % (request_screen_capture_code, delay_code, show_console_code, unlock_phone_code, api_hubs_workday_code, ocr_workday_code, trip_check_code, wx_push_code_success, wx_push_code_failed)
+''' % (delay_code, show_console_code, unlock_phone_code, api_hubs_workday_code, ocr_workday_code, trip_check_code, wx_push_code_success, wx_push_code_failed)
 
         return result
 
