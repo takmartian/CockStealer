@@ -452,10 +452,7 @@ function IsWorkday() {
             # 如果填写了apiHub的API Key，追加判断是否工作日的代码
             result += self.is_workday(self.api_hubs_token)
 
-        if self.is_skip_holiday and self.skip_holiday_mode == 'ocrSkip':
-            # 如果选择了OCR跳过节假日，追加OCR识别的代码
-            result += self.ocr_code()
-
+        result += self.ocr_code()  # 追加OCR识别的代码
         result += self.kill_dingtalk()  # 追加结束钉钉进程的代码
         result += self.open_check_in_page()  # 追加打开打卡页面的代码
         result += self.start_check_in()  # 追加开始打卡的代码
