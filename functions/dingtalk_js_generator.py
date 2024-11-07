@@ -292,6 +292,7 @@ function IsWorkday() {
         """
         return """
     console.show();
+    console.setPosition(0, 200);
 """
 
     def ocr_code(self):

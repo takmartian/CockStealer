@@ -14,7 +14,9 @@
         .editor-buttons:hover { background-color: #0056b3; }
         footer { background-color: #f4f4f4; text-align: center; padding: 10px; margin-top: 20px; font-size: 14px; color: #777; }
         .form-container { margin: 10px 10px 10px auto; padding: 20px; background-color: white; border-radius: 8px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); max-width: 400px; min-width: 400px; }
-        .form-group { display: flex; align-items: start; margin-bottom: 15px; background-color: #f5f5f5; padding: 10px; border-radius: 8px; }
+        .form-group { position: relative; display: flex; align-items: start; margin-bottom: 15px; background-color: #f5f5f5; padding: 10px; border-radius: 8px; }
+        .form-group[data-tooltip]:hover::after { content: attr(data-tooltip); position: absolute; left: 50%; bottom: 100%; transform: translateX(-50%); background-color: #333; color: #fff; padding: 5px 10px; border-radius: 5px; white-space: nowrap; font-size: 12px; opacity: 1; transition: opacity 0.2s; visibility: visible; }
+        .form-group[data-tooltip]:hover::before { content: ''; position: absolute; left: 50%; bottom: 100%; transform: translateX(-50%); border: 5px solid transparent; border-top-color: #333; margin-bottom: -5px; opacity: 1; transition: opacity 0.2s; visibility: visible; }
         .form-group label { flex: 3; margin-right: 10px; font-weight: bold; }
         .form-group input[type="text"] { flex: 2; padding: 5px; border: 1px solid #ced4da; border-radius: 5px; }
         .form-group-spt { display: flex; align-items: start; margin-bottom: 15px; background-color: #f5f5f5; padding: 10px; border-radius: 8px; }
@@ -37,7 +39,7 @@
 <div class="container">
     <div class="form-container">
         <form id="settingsForm" onsubmit="event.preventDefault(); generateScript();">
-            <div class="form-group">
+            <div class="form-group" data-tooltip="可能部分机型不可用，请慎用。">
                 <label for="delayCheck">随机延时打卡</label>
                 <input type="checkbox" id="delayCheck" name="delayCheck" onclick="toggleDelayCheck()">
             </div>
@@ -45,7 +47,7 @@
                 <label for="delayTime">随机延时时间（分钟）</label>
                 <input type="text" id="delayTime" name="delayTime" placeholder="请输入延时时间" value="30" oninput = "value=value.replace(/[^\d]/g,'')">
             </div>
-            <div class="form-group">
+            <div class="form-group" data-tooltip="屏幕分辨率太低可能会导致元素遮挡，影响自动操作。">
                 <label for="showConsole">显示控制台</label>
                 <input type="checkbox" id="showConsole" name="showConsole">
             </div>
@@ -79,12 +81,12 @@
                 <input type="checkbox" id="skipHoliday" name="skipHoliday" onclick="toggleSkipHoliday()">
             </div>
             <div id="skipHolidayOptions" class="second-options" style="display:none;">
-                <div class="form-group">
+                <div class="form-group" data-tooltip="不靠谱，可能因为页面加载太慢导致识别不到">
                     <label for="ocrSkip">OCR识别打卡界面</label>
                     <input type="radio" id="ocrSkip" name="skipHolidayMode" value="ocrSkip" checked="checked"
                            onclick="toggleApiHubsApiKey()">
                 </div>
-                <div class="form-group">
+                <div class="form-group" data-tooltip="付费接口">
                     <label for="apiHubs">ApiHubs接口</label>
                     <input type="radio" id="apiHubs" name="skipHolidayMode" value="apiHubs"
                            onclick="toggleApiHubsApiKey()">
