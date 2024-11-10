@@ -332,6 +332,7 @@ function IsWorkday() {
 
         if self.is_unlock_phone:
             unlock_phone_code = """
+    sleep(1000);    // 等待1秒，防止亮屏动画没结束就开始解锁
     // 解锁手机
     unlockPhone('%s', '%s');
     """ % (self.unlock_method, self.unlock_password)
