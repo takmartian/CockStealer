@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AutoX.JS</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .sidebar {
+            height: 100%;
+            width: 200px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #111;
+            padding-top: 20px;
+        }
+        .sidebar a {
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 14px;
+            color: white;
+            display: block;
+        }
+        .sidebar a:hover {
+            background-color: #575757;
+        }
+        .content {
+            margin-left: 210px;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <a href="#download">AutoX 下载</a>
+        <a href="#intro">AutoX 简介</a>
+        <a href="#intro-sidemenu" style="padding-left: 40px; font-size: small;">侧边菜单</a>
+        <a href="#intro-home" style="padding-left: 40px; font-size: small;">主页</a>
+        <a href="#intro-manage" style="padding-left: 40px; font-size: small;">管理</a>
+        <a href="#coding">脚本编写</a>
+        <a href="#coding-basic-api" style="padding-left: 40px; font-size: small;">基本API</a>
+        <a href="#coding-sample-code" style="padding-left: 40px; font-size: small;">示例代码</a>
+        <a href="#vs-plugin">VS Code 插件</a>
+        <a href="#vs-plugin-install" style="padding-left: 40px; font-size: small;">插件安装</a>
+        <a href="#vs-plugin-connect-phone" style="padding-left: 40px; font-size: small;">连接手机</a>
+        <a href="#vs-plugin-debug" style="padding-left: 40px; font-size: small;">调试</a>
+    </div>
+    <div class="content">
+        <h1 id="download">下载 AutoX.JS</h1>
+        <p>最新版本是7.x，但有无法获取屏幕尺寸等等Bug，6.5.6是相对稳定版本，推荐下载。</p>
+        <p><a href="https://github.com/kkevsekk1/AutoX/releases/tag/6.5.6">AutoX 6.5.6 下载</a></p>
+        <h1 id="intro">AutoX.JS简介</h1>
+        <p>AutoX.JS是一个基于Node.js的自动化测试框架，可以用于安卓应用及系统的自动化测试。</p>
+        <h2>界面介绍</h2>
+        <p>AutoX.JS的界面分为三个部分：</p>
+        <ul>
+            <li><strong>主页</strong>：列出脚本文件夹内容。</li>
+            <li><strong>管理</strong>：列出当前正在执行的脚本以及已创建的定时任务。</li>
+            <li><strong>文档</strong>：官方文档</li>
+        </ul>
+        <h3 id="intro-sidemenu">侧边菜单</h3>
+        <div>
+            <div style="display: inline-block">
+                <img src="/static/images/autoxjs/sidemenu.jpg" width="300">
+            </div>
+            <div style="display: inline-block;">
+                <ul>
+                    <li><h4>服务</h4></li>
+                    <li><strong>启用新编辑器</strong>：在APP内编辑脚本时所用的IDE编辑器版本（新版/旧版）。</li>
+                    <li><strong>无障碍服务</strong>：当无障碍服务开启后，Autox才有权限操作屏幕、元素、系统控制等。</li>
+                    <li><strong>稳定模式</strong>：没用过，请参考官方文档。</li>
+                    <li><strong>通知获取权限</strong>：开启后可获取系统通知内容。</li>
+                    <li><strong>前台服务</strong>：保持APP持续运行。</li>
+                    <li><strong>使用情况访问权限</strong>：开启后，AutoX可获取设备使用情况。</li>
+                    <li><h4>录制脚本</h4></li>
+                    <li><strong>悬浮窗</strong>：显示一个悬浮窗在屏幕表层，可以快速操作AutoX</li>
+                    <li><strong>音量下键控制</strong>：录制脚本时可使用音量下按键控制开始/结束。</li>
+                    <li><strong>自动备份脚本</strong>：脚本上传到云（不明真相上传到哪儿）</li>
+                    <li><h4>其他</h4></li>
+                    <li><strong>连接电脑</strong>：使用IP/数据线与电脑进行socket连接，使用电脑操控手机端的AutoX。</li>
+                    <li><strong>打开USB调试</strong>：可以通过USB数据线连接电脑进行调试，电脑需要安装ADO驱动，手机需要打开USB调试。</li>
+                    <li><strong>设置</strong>：AutoX的软件设置。</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3 id="intro-home">主页</h3>
+        <div>
+            <div style="display: inline-block">
+                <img src="/static/images/autoxjs/home.jpg" width="300">
+            </div>
+            <div style="display: inline-block;">
+                <ul>
+                    <li><h4>示例代码</h4></li>
+                    <li>此文件夹包含了APP自带的一些脚本示例，可以在此文件夹找到一些案例并参考。</li>
+                    <li><h4>文件</h4></li>
+                    <li>此处列出了AutoX资源文件夹中的脚本清单，图中DingTalk.js为我创建的一个js脚本。</li>
+                    <li><strong>运行</strong>：脚本后方的三角按钮可运行该脚本。</li>
+                    <li><strong>编辑</strong>：脚本后方的铅笔按钮可在APP中编辑该脚本。</li>
+                    <li><strong>更多</strong>：脚本后方的···按钮可以对脚本进行更多操作。</li>
+                    <li><strong>··· - 循环运行</strong>：设置脚本循环执行，可设置循环次数、循环间隔、开始运行前的延迟。</li>
+                    <li><strong>··· - 定时任务</strong>：设置脚本定时执行，可设置每天在制定时间运行、只在某时间运行一次，按星期运行，广播触发运行。</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3 id="intro-manage">管理</h3>
+        <div>
+            <div style="display: inline-block">
+                <img src="/static/images/autoxjs/manage.jpg" width="300">
+            </div>
+            <div style="display: inline-block;">
+                <ul>
+                    <li><h4>运行中脚本</h4></li>
+                    <li>此处显示当前正在运行的脚本，可以手动结束。</li>
+                    <li><h4>定时任务</h4></li>
+                    <li>此处显示已设置的定时任务，可对任务进行修改或删除。</li>
+                </ul>
+            </div>
+        </div>
+        <h1 id="coding">脚本编写</h1>
+        <p>AutoX.JS的脚本是基于JavaScript的，可以使用JavaScript的语法进行编写。</p>
+        <p>AutoX.JS提供了一些API供脚本调用，如：<code>click()</code>、<code>swipe()</code>、<code>text()</code>等。</p>
+        <p>脚本编写的过程中，可以使用AutoX.JS的IDE进行调试，也可以使用其他IDE进行编写，然后导入到AutoX.JS中。</p>
+        <p>官方文档：<a href="http://doc.autoxjs.com/">http://doc.autoxjs.com/</a></p>
+        <h2 id="coding-basic-api">基本API</h2>
+        <p>AutoX.JS提供了一些API供脚本调用，如：</p>
+        <ul>
+            <li><strong>click()</strong>：点击屏幕上的某个元素。</li>
+            <li><strong>swipe()</strong>：滑动屏幕。</li>
+            <li><strong>text()</strong>：输入文本。</li>
+            <li><strong>back()</strong>：返回。</li>
+            <li><strong>home()</strong>：返回主页。</li>
+            <li><strong>power()</strong>：锁屏。</li>
+            <li><strong>sleep()</strong>：等待x毫秒。</li>
+            <li>更多API参考官方文档。</li>
+        </ul>
+        <h2 id="coding-sample-code">示例代码</h2>
+        <p>以下是一个简单的AutoX.JS脚本示例：</p>
+        <pre style="background-color: #eeeeee; padding-left: 40px;">
+            <code>
+// 引入AutoX基础模块
+const appName = "YourApp"; // 替换为你的应用名称
+const userName = "username123";
+const password = "password123";
+
+// 启动应用并等待加载完成
+console.log("启动应用: " + appName);
+if (!launchApp(appName)) {
+    console.error("无法启动应用，请检查应用是否安装");
+    exit();
+}
+waitForPackage(appName, 20000);
+console.log("应用启动成功");
+
+// 定位到登录页面
+if (text("登录").exists()) {
+    console.log("定位到登录页面");
+} else {
+    console.error("未找到登录页面");
+    exit();
+}
+
+// 输入用户名和密码
+setText(0, userName);
+setText(1, password);
+console.log("输入用户名和密码");
+
+// 点击登录按钮
+if (text("登录").clickable()) {
+    text("登录").click();
+    console.log("点击登录按钮");
+} else {
+    console.error("登录按钮不可点击");
+    exit();
+}
+
+// 等待登录成功
+sleep(2000);
+if (text("主页").exists()) {
+    console.log("登录成功，进入主页");
+} else {
+    console.error("登录失败，请检查凭证");
+    exit();
+}
+
+// 模拟滑动操作
+swipe(500, 1500, 500, 500, 500);
+console.log("页面向上滑动");
+
+// 选择一个条目并点击
+if (text("项目").exists()) {
+    text("项目").click();
+    console.log("进入项目页面");
+} else {
+    console.error("未找到项目页面");
+}
+
+// 进行延迟和确认截图操作
+sleep(1000);
+if (images.requestScreenCapture()) {
+    let screenshot = images.captureScreen();
+    console.log("截图成功");
+    images.save(screenshot, "/sdcard/AutoX/screenshot.png", "png", 100);
+} else {
+    console.error("截图失败");
+}
+
+// 定位到某个具体的文本并进行点击
+if (text("完成").exists()) {
+    text("完成").click();
+    console.log("点击完成按钮");
+} else {
+    console.error("未找到完成按钮");
+}
+
+// 延迟3秒，结束脚本
+sleep(3000);
+console.log("脚本执行完毕");
+exit();
+            </code>
+        </pre>
+        <h1 id="vs-plugin">VS Code 插件</h1>
+        <p>AutoX提供了VSCode插件，可与手机连接并实时调试。</p>
+
+        <h2 id="vs-plugin-install">插件安装方法</h2>
+        <img src="/static/images/autoxjs/vsplugin.png">
+        <p>在VSCode中插件面板搜索autox，找到图中的插件安装即可。</p>
+        <h2 id="vs-plugin-connect-phone">连接手机</h2>
+        <p>在VSCode中按下Cmd/Ctrl+Shift+P，唤起命令行，输入start server，选择启动autox服务：</p>
+        <img src="/static/images/autoxjs/startserver.png">
+        <p>启动成功后IDE右下角会提示连接的IP和端口：</p>
+        <img src="/static/images/autoxjs/connectip.png">
+        <p>手机打开AutoX并连接手机，输入IP和端口，或者扫描二维码进行连接即可。</p>
+
+        <h2 id="vs-plugin-debug">调试</h2>
+        <p>创建好js文件，编写好脚本，点击右上角的三角按钮，即可在设备上测试脚本。</p>
+        <p>右键点击文件可以将文件存储到设备中。</p>
+        <img src="/static/images/autoxjs/testing.png">
+
+    </div>
+</body>
+</html>

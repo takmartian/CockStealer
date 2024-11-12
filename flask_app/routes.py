@@ -9,6 +9,11 @@ def gen_autoxjs():
     return render_template('gen_autoxjs.html')
 
 
+@main_routes.route('/autox.js', methods=['GET'])
+def autoxjs():
+    return render_template('autoxjs.html')
+
+
 @main_routes.route('/dingtalk_js', methods=['POST'])
 def dingtalk_js():
     dtg = DingTalkJSGenerator(request.json)
